@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title%}
+Add company
+{% endblock %}
+
+{% block content %}
+
+<div>
+    <div>
+        <h2>Add company</h2>
+        <form id="projectForm" method="post" action="{% url 'add_company' %}">
+            {% csrf_token %}
+            {{ form.as_p }} 
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+

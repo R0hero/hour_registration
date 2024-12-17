@@ -1,0 +1,13 @@
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <h2>Add Timecard</h2>
+        <form id="timecardForm" method="post" action="{% url 'add_timecard' %}">
+            {% csrf_token %}
+            <input type="hidden" name="date" value="">
+            {{ form.as_p }} 
+            <button type="submit">Save</button>
+        </form>
+    </div>
+</div>

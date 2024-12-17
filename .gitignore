@@ -1,0 +1,4 @@
+# .gitignore
+secrets.py
+register_hours/__pycache__/secrets.cpython-312.pyc
+register_hours/__pycache__/.secrets.cpython-312.pyc.swp

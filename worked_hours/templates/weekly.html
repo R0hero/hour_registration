@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title%}
+Weekly data
+{% endblock %}
+
+{% block content %}
+<h2>Weekly data for {{ user.username }}</h2>
+<div class="">
+    <a href="{% url 'weekly' previous_year previous_week %}" class="prev-link">&laquo; Previous week</a>
+    <a href="{% url 'weekly' %}" class="next-link">Current week</a>
+    <a href="{% url 'weekly' next_year next_week %}" class="next-link">Next week &raquo;</a>
+</div>
+<p>You have worked the following for week {{ week_number }} in {{ year }}:</p>
+
+<table class="equal-width-week">
+    <thead>
+        <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th class="weekend">Saturday</th>
+            <th class="weekend">Sunday</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            {% for day in weekdays %}
+                <td class="equal-width-week {% if day in weekend %}weekend{% endif %}">
+                    {% with day_has_entries=False %}
+                        {% for date, company_timecards in grouped_timecards.items %}
+                            {% if date|is_day:day %}
+                                {% with day_has_entries=True %}
+                                    <ul>
+                                        {% for company, timecards in company_timecards.items %}
+                                            <strong>{{ company }}</strong>
+                                            {% for timecard in timecards %}
+                                                <li>{{ timecard.duration|format_duration }} on {{ timecard.project.project_number }} ({{ timecard.project.project_name }})</li>
+                                            {% endfor %}
+                                        {% endfor %}
+                                    </ul>
+                                    Total duration for this day: {{ daily_hours_companies|total_duration:date|format_duration }}
+                                {% endwith %}
+                            {% endif %}
+                        {% endfor %}
+                    {% endwith %}
+                </td>
+            {% endfor %}
+        </tr>
+    </tbody>
+</table>
+
+<div class="plot-container">
+    <img src="{{ weekly_plot }}" alt="Weekly Worked Hours">
+</div>
+
+<p>Total hours this week: {{ total_hours|format_duration }}. <br>
+Target hours are {{ target_hours|format_duration }}. <br>
+{% with total_hours=target_hours|timedelta_difference:difference_hours %} 
+    {% if difference_hours.total_seconds < 0 %}
+        <p>You are missing {{ difference_hours|absolute_timedelta|format_duration }}</p>
+    {% else %}
+        <p>You have a surplus of {{ difference_hours|format_duration }}.</p>
+    {% endif %}
+{% endwith %}
+
+
+
+</p>
+
+
+{% endblock %}
+

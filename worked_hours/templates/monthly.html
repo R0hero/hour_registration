@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block title%}
+Monthly data
+{% endblock %}
+
+{% block content %}
+<h2>Monthly data for {{ user.username }}</h2>
+<div class="">
+    <a href="{% url 'monthly' previous_year previous_month %}" class="prev-link">&laquo; Previous month</a>
+    <a href="{% url 'monthly' %}" class="next-link">Current month</a>
+    <a href="{% url 'monthly' next_year next_month %}" class="next-link">Next month &raquo;</a>
+</div>
+
+<p>You have worked the following for {{ month }} {{ year }}:</p>
+
+{% for date, company_timecards in grouped_timecards.items %}
+    <h3>{{ date }}</h3>
+    <ul>
+        {% for company, timecards in company_timecards.items %}
+            <li> <strong>{{ company.company_name }} ({{ company.company_number }})</strong> </li>
+            {% for timecard in timecards %}
+            <li class="no-bullet">{{ timecard.duration|format_duration }} hours on {{ timecard.project.project_number}} ({{timecard.project.project_name}})</li>
+            {% endfor %}
+            <br>
+            Total duration for {{company.company_name}} this day: {{ daily_hours_companies|get_item:date|get_item:company|format_duration }}</li>
+            
+        {% endfor %}
+    </ul>
+    <p>Total duration for {{date}}: {{ daily_hours_companies|total_duration:date|format_duration }}</p>
+{% endfor %}
+
+
+
+<p>Total hours this month: {{ total_hours|format_duration }}</p>
+
+<div class="">
+    <a href="{% url 'monthly' previous_year previous_month %}" class="prev-link">&laquo; Previous month</a>
+    <a href="{% url 'monthly' %}" class="next-link">Current month</a>
+    <a href="{% url 'monthly' next_year next_month %}" class="next-link">Next month &raquo;</a>
+</div>
+
+{% endblock %}
+

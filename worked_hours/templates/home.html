@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+{% load static %}
+
+{% block title%}
+Home
+{% endblock %}
+
+{% block content %}
+
+<center>
+    <h2>Welcome {{ user.username }}</h2>
+    <p>Calendar for {{month}} {{year}}</p>
+    {{ calendar|safe }}
+    <div class="nav-links-calendar">
+        <a href="{% url 'home' previous_year previous_month %}" class="prev-link">&laquo; Previous month</a>
+        <a href="{% url 'home' %}" class="next-link">Current month</a>
+        <a href="{% url 'home' next_year next_month %}" class="next-link">Next month &raquo;</a>
+    </div>
+</center>
+
+
+<div id="popup" class="popup">
+    <div class="popup-content">
+        <span class="close">&times;</span>
+        <center>
+            <h2><span id="selected-date">{{ date }} </span></h2>
+        </center> 
+        <div class="content-sections">
+            <div class="left-side">
+                <h2>Current timecards</h2>
+                <div id="timecards-container" data-edit-url-base="{% url 'edit_timecard' 0 %}">
+                    <!-- Timecards will be populated here by JavaScript -->
+                </div>
+            </div>
+            <div class="right-side">
+                <h2>Add timecard</span></h2>
+                <form id="timecardForm" method="post" action="{% url 'add_timecard' %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="date" value="">
+                    {{ form.as_p }}
+                    <button type="submit">Save</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const getTimecardsUrl = "{% url 'get_timecards' %}";
+</script>
+
+{% endblock %}
+
+
