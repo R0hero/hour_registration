@@ -48,6 +48,21 @@ document.addEventListener("DOMContentLoaded", function() {
             popup.style.display = "none";
         }
     }
+
+    document.getElementById('timecardForm').addEventListener('submit', function(event) {
+        var durationInput = document.querySelector('input[name="duration"]');
+        var durationValue = durationInput.value;
+
+        // Validate the format (e.g., 07:30)
+        if (!/^\d{1,2}:\d{2}$/.test(durationValue)) {
+            alert('Please enter the duration in the format HH:MM (e.g., 07:30).');
+            event.preventDefault(); // Prevent form submission
+            return;
+        }
+
+        // No need to parse here; the backend will handle it as a duration
+        // The time widget's value is already in HH:MM format
+    });
 });
 
 // CSRF token helper function

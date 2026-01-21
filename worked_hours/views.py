@@ -275,6 +275,11 @@ def add_timecard(request):
             timecard = form.save(commit=False)
             timecard.user = request.user
             timecard.date = request.POST.get('date')
+
+            duration_str = request.POST.get('duration')
+            if duration_str:
+                hours, minutes = map(int, duration_str.split(':'))
+                timecard.duration = timedelta(hours=hours, minutes=minutes)
             timecard.save()
 
             return redirect(reverse('home'))  # Redirect to home after saving
@@ -289,6 +294,13 @@ def edit_timecard(request, timecard_id):
     if request.method == 'POST':
         form = TimecardForm(request.POST, instance=timecard)
         if form.is_valid():
+
+            duration_str = request.POST.get('duration')
+            if duration_str:
+                hours, minutes = map(int, duration_str.split(':'))
+                timecard.duration = timedelta(hours=hours, minutes=minutes)
+            timecard.save()
+            
             form.save()
             return redirect('home')
     else:
