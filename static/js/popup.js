@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", function() {
         var durationValue = durationInput.value;
 
         // Validate the format (e.g., 07:30)
-        if (!/^\d{1,2}:\d{2}$/.test(durationValue)) {
-            alert('Please enter the duration in the format HH:MM (e.g., 07:30).');
+        if (!/^\d{1,2}:\d{2}(:\d{2})?$/.test(durationValue)) {
+            alert('Please enter the duration in the format HH:MM or HH:MM:SS (e.g., 07:30 or 07:30:00).');
             event.preventDefault(); // Prevent form submission
             return;
         }

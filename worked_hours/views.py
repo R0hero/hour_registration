@@ -267,6 +267,18 @@ def weekly(request, year=datetime.now().year, week=datetime.now().strftime('%W')
         'weekly_plot': weeklyplot,
     })
 
+def parse_duration(duration_str):
+    """Parse duration string into timedelta, supporting both HH:MM and HH:MM:SS formats."""
+    parts = duration_str.split(':')
+    if len(parts) == 2:  # HH:MM
+        hours, minutes = map(int, parts)
+        return timedelta(hours=hours, minutes=minutes)
+    elif len(parts) == 3:  # HH:MM:SS
+        hours, minutes, seconds = map(int, parts)
+        return timedelta(hours=hours, minutes=minutes, seconds=seconds)
+    else:
+        raise ValueError("Invalid duration format")
+
 @login_required
 def add_timecard(request):
     if request.method == 'POST':
@@ -278,8 +290,8 @@ def add_timecard(request):
 
             duration_str = request.POST.get('duration')
             if duration_str:
-                hours, minutes = map(int, duration_str.split(':'))
-                timecard.duration = timedelta(hours=hours, minutes=minutes)
+                timecard.duration = parse_duration(duration_str)
+
             timecard.save()
 
             return redirect(reverse('home'))  # Redirect to home after saving
@@ -297,10 +309,9 @@ def edit_timecard(request, timecard_id):
 
             duration_str = request.POST.get('duration')
             if duration_str:
-                hours, minutes = map(int, duration_str.split(':'))
-                timecard.duration = timedelta(hours=hours, minutes=minutes)
+                timecard.duration = parse_duration(duration_str)
             timecard.save()
-            
+
             form.save()
             return redirect('home')
     else:
